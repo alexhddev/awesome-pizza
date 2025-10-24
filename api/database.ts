@@ -5,27 +5,27 @@ export const dailyMenu: menu_entry[] = [
     {
         name: "Margherita Pizza",
         description: "Classic pizza with fresh tomatoes, mozzarella cheese, and basil",
-        imageUrl: "https://example.com/margherita.jpg"
+        imageUrl: "assets/margherita.png"
     },
     {
         name: "Pepperoni Pizza",
         description: "Traditional pizza topped with pepperoni and mozzarella cheese",
-        imageUrl: "https://example.com/pepperoni.jpg"
+        imageUrl: "assets/pepperoni.png"
     },
     {
         name: "Quattro Stagioni",
         description: "Four seasons pizza with artichokes, ham, mushrooms, and olives",
-        imageUrl: "https://example.com/quattro.jpg"
+        imageUrl: "assets/quattro.png"
     },
     {
         name: "Vegetarian Delight",
         description: "Fresh vegetables including bell peppers, onions, mushrooms, and tomatoes",
-        imageUrl: "https://example.com/vegetarian.jpg"
+        imageUrl: "assets/vegetarian.png"
     },
     {
         name: "BBQ Chicken Pizza",
         description: "Grilled chicken with BBQ sauce, red onions, and cilantro",
-        imageUrl: "https://example.com/bbq-chicken.jpg"
+        imageUrl: "assets/bbq-chicken.png"
     }
 ];
 
