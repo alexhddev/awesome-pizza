@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import { menu_entry, order } from '../model/Model';
 import { dailyMenu, findOrderById, addOrder, updateOrderById } from './database';
 
@@ -8,6 +9,9 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from ui directory
+app.use(express.static(path.join(__dirname, '../ui')));
 
 // CORS middleware for development
 app.use((req, res, next) => {
@@ -247,9 +251,15 @@ app.put('/api/orders/:id', (req, res) => {
     }
 });
 
+// Serve the UI on root path
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, '../ui/index.html'));
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`🍕 Awesome Pizza API server running on port ${PORT}`);
+    console.log(`🌐 Web UI available at http://localhost:${PORT}`);
 });
 
 export default app;
