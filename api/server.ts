@@ -81,14 +81,14 @@ app.get('/api/orders/:id', (req, res) => {
 // POST /api/orders - Create a new order
 app.post('/api/orders', (req, res) => {
     try {
-        const { name, contents } = req.body;
+        const { sender, contents } = req.body;
 
         // Validation
-        if (!name || typeof name !== 'string' || name.trim() === '') {
+        if (!sender || typeof sender !== 'string' || sender.trim() === '') {
             return res.status(400).json({
                 success: false,
                 error: 'Bad request',
-                message: 'Order name is required and must be a non-empty string'
+                message: 'Order sender is required and must be a non-empty string'
             });
         }
 
@@ -121,7 +121,7 @@ app.post('/api/orders', (req, res) => {
 
         // Create new order with default status
         const orderData = {
-            name: name.trim(),
+            sender: sender.trim(),
             status: 'RECEIVED' as const,
             contents: contents
         };
@@ -146,7 +146,7 @@ app.post('/api/orders', (req, res) => {
 app.put('/api/orders/:id', (req, res) => {
     try {
         const { id } = req.params;
-        const { name, status, contents } = req.body;
+        const { sender, status, contents } = req.body;
 
         if (!id) {
             return res.status(400).json({
@@ -169,15 +169,15 @@ app.put('/api/orders/:id', (req, res) => {
         // Validate optional fields if provided
         const updateData: Partial<order> = {};
 
-        if (name !== undefined) {
-            if (typeof name !== 'string' || name.trim() === '') {
+        if (sender !== undefined) {
+            if (typeof sender !== 'string' || sender.trim() === '') {
                 return res.status(400).json({
                     success: false,
                     error: 'Bad request',
-                    message: 'Order name must be a non-empty string'
+                    message: 'Order sender must be a non-empty string'
                 });
             }
-            updateData.name = name.trim();
+            updateData.sender = sender.trim();
         }
 
         if (status !== undefined) {

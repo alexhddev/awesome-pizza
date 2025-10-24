@@ -6,7 +6,7 @@ export type menu_entry = {
 
 export type order = {
     id: string,
-    name: string,
+    sender: string,
     status: 'RECEIVED' | 'DELIVERING' | 'DELIVERED' | 'CANCELED'
     contents: {
         name: string,

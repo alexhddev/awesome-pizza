@@ -33,7 +33,7 @@ export const dailyMenu: menu_entry[] = [
 export const orders: order[] = [
     {
         id: "order-001",
-        name: "John Doe",
+        sender: "John Doe",
         status: "RECEIVED",
         contents: [
             { name: "Margherita Pizza", quantity: 2 },
@@ -42,7 +42,7 @@ export const orders: order[] = [
     },
     {
         id: "order-002",
-        name: "Jane Smith",
+        sender: "Jane Smith",
         status: "DELIVERING",
         contents: [
             { name: "Vegetarian Delight", quantity: 1 },
@@ -51,7 +51,7 @@ export const orders: order[] = [
     },
     {
         id: "order-003",
-        name: "Mike Johnson",
+        sender: "Mike Johnson",
         status: "DELIVERED",
         contents: [
             { name: "Quattro Stagioni", quantity: 3 }
