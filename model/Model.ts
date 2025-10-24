@@ -1,12 +1,13 @@
-type menu_entry = {
+export type menu_entry = {
     name: string,
     description: string,
     imageUrl: string
 }
 
-type order = {
+export type order = {
     id: string,
     name: string,
+    status: 'RECEIVED' | 'DELIVERING' | 'DELIVERED' | 'CANCELED'
     contents: {
         name: string,
         quantity: number
