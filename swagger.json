@@ -1,0 +1,407 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Awesome Pizza API",
+    "description": "REST API for managing the daily pizza menu and customer orders.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Base64-encoded JSON token. Admin token: `eyJyb2xlIjoiYWRtaW4ifQ==` (payload: `{\"role\":\"admin\"}`)"
+      }
+    },
+    "schemas": {
+      "MenuEntry": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Margherita Pizza" },
+          "description": { "type": "string", "example": "Classic tomato sauce with fresh mozzarella" },
+          "imageUrl": { "type": "string", "example": "/assets/margherita.jpg" }
+        },
+        "required": ["name", "description", "imageUrl"]
+      },
+      "OrderItem": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "example": "Margherita Pizza" },
+          "quantity": { "type": "integer", "minimum": 1, "example": 2 }
+        },
+        "required": ["name", "quantity"]
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "example": "a1b2c3d4" },
+          "sender": { "type": "string", "example": "John Doe" },
+          "status": {
+            "type": "string",
+            "enum": ["RECEIVED", "DELIVERING", "DELIVERED", "CANCELED"],
+            "example": "RECEIVED"
+          },
+          "contents": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrderItem" }
+          }
+        },
+        "required": ["id", "sender", "status", "contents"]
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {},
+          "message": { "type": "string" }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "error": { "type": "string", "example": "Bad request" },
+          "message": { "type": "string", "example": "Order sender is required" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/daily-menu": {
+      "get": {
+        "summary": "Get today's menu",
+        "description": "Returns the list of pizza items available on the daily menu.",
+        "operationId": "getDailyMenu",
+        "tags": ["Menu"],
+        "responses": {
+          "200": {
+            "description": "Daily menu retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/SuccessResponse" },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": { "$ref": "#/components/schemas/MenuEntry" }
+                        },
+                        "message": { "example": "Daily menu retrieved successfully" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders/{id}": {
+      "get": {
+        "summary": "Get order by ID",
+        "description": "Retrieves a specific order using its unique ID.",
+        "operationId": "getOrderById",
+        "tags": ["Orders"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The order ID",
+            "schema": { "type": "string", "example": "a1b2c3d4" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/SuccessResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Order" },
+                        "message": { "example": "Order retrieved successfully" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Order ID is required",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an order",
+        "description": "Updates an existing order. All fields are optional — only the provided fields are updated.",
+        "operationId": "updateOrder",
+        "tags": ["Orders"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The order ID",
+            "schema": { "type": "string", "example": "a1b2c3d4" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "sender": { "type": "string", "example": "Jane Doe" },
+                  "status": {
+                    "type": "string",
+                    "enum": ["RECEIVED", "DELIVERING", "DELIVERED", "CANCELED"],
+                    "example": "DELIVERING"
+                  },
+                  "contents": {
+                    "type": "array",
+                    "items": { "$ref": "#/components/schemas/OrderItem" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/SuccessResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Order" },
+                        "message": { "example": "Order updated successfully" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/orders": {
+      "post": {
+        "summary": "Create a new order",
+        "description": "Places a new pizza order. The order starts with status `RECEIVED`.",
+        "operationId": "createOrder",
+        "tags": ["Orders"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["sender", "contents"],
+                "properties": {
+                  "sender": { "type": "string", "example": "John Doe" },
+                  "contents": {
+                    "type": "array",
+                    "minItems": 1,
+                    "items": { "$ref": "#/components/schemas/OrderItem" }
+                  }
+                }
+              },
+              "example": {
+                "sender": "John Doe",
+                "contents": [
+                  { "name": "Margherita Pizza", "quantity": 2 },
+                  { "name": "Pepperoni Pizza", "quantity": 1 }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/SuccessResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/Order" },
+                        "message": { "example": "Order created successfully" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected": {
+      "get": {
+        "summary": "Protected route",
+        "description": "Access requires a valid Bearer token.",
+        "operationId": "getProtected",
+        "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Access granted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Access granted to protected route" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin": {
+      "get": {
+        "summary": "Admin route",
+        "description": "Decodes the Bearer token and grants access only if `role` is `admin`.",
+        "operationId": "getAdmin",
+        "tags": ["Auth"],
+        "security": [{ "BearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Welcome, admin!",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": { "type": "boolean", "example": true },
+                    "message": { "type": "string", "example": "Welcome, admin!" }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized — missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden — token does not have admin role",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    { "name": "Menu", "description": "Daily pizza menu" },
+    { "name": "Orders", "description": "Order management" },
+    { "name": "Auth", "description": "Protected and admin routes" }
+  ]
+}

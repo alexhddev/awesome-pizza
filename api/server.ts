@@ -303,6 +303,15 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, '../ui/index.html'));
 });
 
+// Swagger UI
+app.get('/api-docs', (req, res) => {
+    res.sendFile(path.join(__dirname, '../ui/api-docs.html'));
+});
+
+app.get('/api-docs/swagger.json', (req, res) => {
+    res.sendFile(path.join(__dirname, '../swagger.json'));
+});
+
 // Start server
 app.listen(PORT, () => {
     console.log(`🍕 Awesome Pizza API server running on port ${PORT}`);
