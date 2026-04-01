@@ -1,0 +1,15 @@
+meta {
+  name: Admin Route
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{baseUrl}}/api/admin
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

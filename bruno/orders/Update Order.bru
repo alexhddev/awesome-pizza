@@ -1,0 +1,17 @@
+meta {
+  name: Update Order
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{baseUrl}}/api/orders/{{orderId}}
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "status": "DELIVERING"
+  }
+}

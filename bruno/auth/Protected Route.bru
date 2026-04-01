@@ -1,0 +1,15 @@
+meta {
+  name: Protected Route
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{baseUrl}}/api/protected
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{adminToken}}
+}

@@ -1,0 +1,27 @@
+meta {
+  name: Create Order
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{baseUrl}}/api/orders
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "sender": "John Doe",
+    "contents": [
+      {
+        "name": "Margherita Pizza",
+        "quantity": 2
+      },
+      {
+        "name": "Pepperoni Pizza",
+        "quantity": 1
+      }
+    ]
+  }
+}
