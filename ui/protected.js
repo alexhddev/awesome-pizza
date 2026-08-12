@@ -5,8 +5,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const token = localStorage.getItem('auth_token');
     if (!token) {
-        // Not logged in — bounce to login page
-        window.location.href = '/login.html';
+        document.getElementById('auth-required-msg').style.display = 'block';
+        document.getElementById('main-content').style.display = 'block';
         return;
     }
 
@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {
     });
     document.getElementById('theme-toggle').addEventListener('click', toggleTheme);
 
+    document.getElementById('logout-btn').style.display = 'block';
+    document.getElementById('main-content').style.display = 'block';
     loadProtectedData(token);
 });
 
